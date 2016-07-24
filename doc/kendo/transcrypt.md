@@ -53,7 +53,7 @@ $ find . -name '*.py' | entr sh -c 'clear; rm -rf __javascript/* ; transcrypt yt
 
 ### HTML
 
-```js
+```html
 
 <!DOCTYPE html>
 <html>
