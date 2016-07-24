@@ -1,9 +1,7 @@
-# Integrating JS Frameworks Within [Transcrypt](http://www.transcrypt.org/)
+# Chapter 1: A [kendoui](http://demos.telerik.com/kendo-ui/datetimepicker/index) `datetime` Widget
 
 <!-- toc -->
 
-- [Integrating JS Frameworks Within [Transcrypt](http://www.transcrypt.org/)](#integrating-js-frameworks-within-transcrypthttpwwwtranscryptorg)
-- [Chapter 1: A [kendoui](http://demos.telerik.com/kendo-ui/datetimepicker/index) `datetime` Widget](#chapter-1-a-kendouihttpdemostelerikcomkendo-uidatetimepickerindex-datetime-widget)
 	- [Strategy](#strategy)
 		- [Preparation](#preparation)
 		- [HTML](#html)
@@ -22,7 +20,6 @@
 <!-- tocstop -->
 
 
-# Chapter 1: A [kendoui](http://demos.telerik.com/kendo-ui/datetimepicker/index) `datetime` Widget
 
 Here is how I, a reasonable Python programmer but not too familiar with javascript did integrate a jquery based framework, KendoUI, into Transcrypt ("TS" in the following).
 
