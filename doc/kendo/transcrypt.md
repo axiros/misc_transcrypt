@@ -1,5 +1,6 @@
 # Integrating JS Frameworks Within [Transcrypt](http://www.transcrypt.org/)
 
+<img class="med" src="c1_1.png" width="20px"/>
 
 <!-- toc -->
 
