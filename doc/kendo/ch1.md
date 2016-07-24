@@ -24,8 +24,9 @@
 
 Here is how I, a reasonable Python programmer but not too familiar with javascript did integrate a jquery based framework, KendoUI, into Transcrypt ("TS" in the following).
 
-
+<p style="color: blue">
 *The following is basically what I wrote down while I did it - and I was on wrong tracks sometimes, e.g. with `__new__`, see below. I did not remove anything once written though, since also wrong tracks might have a learning effect for others new to TS, like me. I do assume good familiarity with Python.*
+</p>
 
 ----
 
