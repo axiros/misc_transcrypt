@@ -1,7 +1,5 @@
 # Integrating JS Frameworks Within [Transcrypt](http://www.transcrypt.org/)
 
-<img class="med" src="c1_1.png" width="20px"/>
-
 <!-- toc -->
 
 - [Integrating JS Frameworks Within [Transcrypt](http://www.transcrypt.org/)](#integrating-js-frameworks-within-transcrypthttpwwwtranscryptorg)
@@ -250,7 +248,7 @@ class DatePicker:
 ```                    
 And we get two nice datepickers in the browser, one from the native js, one from TS:
 
-<img class="med" src="c1_1.png" width="20px"/>
+<img src="c1_1.png" width="20px"/>
 
 
 We basically did the same `each` loop over the matched jquery wrapped elements, than in the kendo module, now in python.
