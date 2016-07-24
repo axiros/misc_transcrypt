@@ -4,3 +4,9 @@ Contains docs and other material around Jacques de Hooge's great [Transcrypt](ht
 framework.
 
 
+## Documentation
+
+[Integrating a JS Framwork](doc/kendo/)
+
+
+
