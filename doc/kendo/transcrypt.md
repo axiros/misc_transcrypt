@@ -29,6 +29,7 @@ Here is how I, a reasonable Python programmer but not too familiar with javascri
 
 <note>
 The following is basically what I wrote down while I did it - and I was on wrong tracks sometimes, e.g. with `__new__`, see below. I did not remove anything once written though, since also wrong tracks might have a learning effect for others new to TS, like me. I do assume good familiarity with Python. 
+</note>
 ----
 
 
@@ -260,6 +261,7 @@ Hmm, we can't call `new` from Transcrypt. What is new doing?
 
 <note>
  found out only later that we *CAN* use `new` in TS: `instance = __new__(MyClass(...))` - but I tried to do without:
+</note>
 
 Reverse engineer the `new widget`: `debugger; new widget(jel, {})`, reload, step into:
 
@@ -567,7 +569,8 @@ Error in program yt.py, module time, line 3:
 No problem, lets create it.
 
 <note>
-That was a joke, if sth is missing in TS you just shim the stuff you need via a javascript or python function and move on. In the case of time we actually [did](https://github.com/JdeH/Transcrypt/pull/86) write and suggest a module to Transcrypt though ;-)
+That was a joke. If sth is missing in TS you just shim the stuff you need via a javascript or python function and move on. In the case of time we actually [did](https://github.com/JdeH/Transcrypt/pull/86) write and suggest a module to Transcrypt though ;-)
+</note>
 
 
 While writing this I don't know yet if the PR will be accepted. If not than I'd simply add the time module next to the widget. If it is added it is available anywhere. Check the PR regarding location and testing of it.
