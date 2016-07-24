@@ -27,9 +27,9 @@
 
 Here is how I, a reasonable Python programmer but not too familiar with javascript did integrate a jquery based framework, KendoUI, into Transcrypt ("TS" in the following).
 
-<note>
+
 The following is basically what I wrote down while I did it - and I was on wrong tracks sometimes, e.g. with `__new__`, see below. I did not remove anything once written though, since also wrong tracks might have a learning effect for others new to TS, like me. I do assume good familiarity with Python. 
-</note>
+
 ----
 
 
@@ -53,7 +53,9 @@ $ find . -name '*.py' | entr sh -c 'clear; rm -rf __javascript/* ; transcrypt yt
 
 
 ### HTML
-```html
+
+```js
+
 <!DOCTYPE html>
 <html>
 
@@ -89,9 +91,11 @@ kendo.calendar.js"></script>
 </html>
 ```
 
-### JS 1:1, via TS's `__pragma__('js')__`
+### Javascript, as is
 
-file `yt.py`, all within `__pragma__('js', '{}', ''')` (removed here, not to confuse the markdown syntax highlighter):
+Using TS's `__pragma__('js')__` we add the javascript examples we found in the web directly:
+
+File `yt.py`, all within `__pragma__('js', '{}', ''')` (removed here, not to confuse the markdown syntax highlighter):
 
 
 ```js
@@ -138,7 +142,7 @@ Lets create it:
 
 all in yt.py, below the js pragma:
 
-```
+```python
 class DatePicker:
     def bind(self, el):
         debugger
@@ -245,7 +249,7 @@ class DatePicker:
 ```                    
 And we get two nice datepickers in the browser, one from the native js, one from TS:
 
-<img src="c1_1.png" width="300">
+<img src="c1_1.png" width="20px"/>
 
 
 We basically did the same `each` loop over the matched jquery wrapped elements, than in the kendo module, now in python.
