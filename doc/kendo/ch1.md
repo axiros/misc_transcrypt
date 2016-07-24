@@ -1,11 +1,13 @@
 # Chapter 1: A [kendoui](http://demos.telerik.com/kendo-ui/datetimepicker/index) `datetime` Widget
 
+
 <!-- toc -->
 
+- [Chapter 1: A [kendoui](http://demos.telerik.com/kendo-ui/datetimepicker/index) `datetime` Widget](#chapter-1-a-kendouihttpdemostelerikcomkendo-uidatetimepickerindex-datetime-widget)
 	- [Strategy](#strategy)
 		- [Preparation](#preparation)
 		- [HTML](#html)
-		- [JS 1:1, via TS's `__pragma__('js')__`](#js-11-via-tss-__pragma__js__)
+		- [Javascript, as is](#javascript-as-is)
 		- [Base Class](#base-class)
 		- [Reverse Engineering Session: Jquery and Kendo](#reverse-engineering-session-jquery-and-kendo)
 			- [Broader View](#broader-view)
@@ -20,11 +22,10 @@
 <!-- tocstop -->
 
 
-
 Here is how I, a reasonable Python programmer but not too familiar with javascript did integrate a jquery based framework, KendoUI, into Transcrypt ("TS" in the following).
 
 
-The following is basically what I wrote down while I did it - and I was on wrong tracks sometimes, e.g. with `__new__`, see below. I did not remove anything once written though, since also wrong tracks might have a learning effect for others new to TS, like me. I do assume good familiarity with Python. 
+The following is basically what I wrote down while I did it - and I was on wrong tracks sometimes, e.g. with `__new__`, see below. I did not remove anything once written though, since also wrong tracks might have a learning effect for others new to TS, like me. I do assume good familiarity with Python.
 
 ----
 
