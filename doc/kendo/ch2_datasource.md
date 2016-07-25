@@ -4,13 +4,13 @@
 <!-- toc -->
 
 - [Chapter 2: Kendo DataSource](#chapter-2-kendo-datasource)
-	- [Local Data](#local-data)
-		- [Rewrite to Python](#rewrite-to-python)
-	- [Refactoring Time](#refactoring-time)
+	- [Example Implementation](#example-implementation)
+	- [Rewrite to Python](#rewrite-to-python)
+	- [Refactoring](#refactoring)
 			- [DataSource](#datasource)
-			- [DatePicker](#datepicker)
-			- [KendoComponent, KendoWidget](#kendocomponent-kendowidget)
-	- [Wiring the Kendo Callbacks](#wiring-the-kendo-callbacks)
+		- [DatePicker](#datepicker)
+		- [KendoComponent, KendoWidget](#kendocomponent-kendowidget)
+	- [Wiring the Callbacks](#wiring-the-callbacks)
 
 <!-- tocstop -->
 
@@ -19,7 +19,7 @@ This is the central component of kendo to feed widgets with data - from server o
 
 Since this is not a widget, kendo will handle it a bit different than e.g. the calendar widget of chapter 1. Lets find out.
 
-## Local Data
+## Example Implementation
 
 We try to get [the official example](http://demos.telerik.com/kendo-ui/datasource/index) to work.
 
@@ -109,7 +109,7 @@ where we just took the concrete non minified kendo libs from [github](https://gi
 Starting the test server and hitting datasource.html gets us the table.
 
 
-### Rewrite to Python
+## Rewrite to Python
 
 We boldly change the html to using a Transcrypt DataSource class now:
 
@@ -176,7 +176,7 @@ In the console, at the breakpoint we can do now `ds.read()` and `ds.data()` deli
 Splendid.
 
 
-## Refactoring Time
+## Refactoring
 
 So we think we understood that there are two sorts of components in kendo: One which mount to the DOM the others which are data only.
 They handle pretty much the same, regarding config, functions and callbacks.
@@ -220,7 +220,7 @@ class DataSource(KendoComponent):
     data = None
 ```
 
-#### DatePicker
+### DatePicker
 
 ```python
 ~/ch2 $ cat datepicker.py
@@ -245,7 +245,7 @@ class DatePicker(KendoWidget, tools.PyDate):
 
 and
 
-#### KendoComponent, KendoWidget
+### KendoComponent, KendoWidget
 
 ```python
 $ cat kendo_base.py
@@ -316,7 +316,7 @@ The two ifs in the base instead of super class calling we find ok if its just 2 
 Important is that everything worked as expected and we think we are getting pretty effective with this all...
 
 
-## Wiring the Kendo Callbacks
+## Wiring the Callbacks
 
 
 Into the `def opts` wrapper we add a universal callback mapper, since we see those are sent into kendo like this:
