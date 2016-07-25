@@ -207,7 +207,7 @@ $ (document).ready(function() {
 with these nice and clean component modules:
 
 
-#### DataSource
+### DataSource
 
 with only the function as above:
 
