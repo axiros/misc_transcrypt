@@ -30,12 +30,12 @@ We try to get [the official example](http://demos.telerik.com/kendo-ui/datasourc
   <html>
   <head>
       <title></title>
-      <link rel="stylesheet" href="lib/kendo.common.min.css" />
-      <link rel="stylesheet" href="lib/kendo.default.min.css" /><Paste>
-      <script src="lib/jquery.min.js"></script>   
-      <script src="lib/kendo.core.js"></script>
-      <script src="lib/kendo.data.js"></script>
-      <script src="lib/kendo.listview.js"></script>
+      <link rel="stylesheet" href="../lib/kendo.common.min.css" />
+      <link rel="stylesheet" href="../lib/kendo.default.min.css" /><Paste>
+      <script src="../lib/jquery.min.js"></script>   
+      <script src="../lib/kendo.core.js"></script>
+      <script src="../lib/kendo.data.js"></script>
+      <script src="../lib/kendo.listview.js"></script>
 
   </head>
   <body>
@@ -219,6 +219,10 @@ from kendo_base import KendoComponent
 class DataSource(KendoComponent):
     _k_cls = kendo.data.DataSource
     data = None
+	_functions = ['read']
+	def __init__(self, opts):
+	    KendoComponent.__init__(self, opts)
+	    self.read()
 ```
 
 ### DatePicker
@@ -338,15 +342,6 @@ class MyDataSource(DataSource):
     def on_change(self):
         template = kendo.template(jq("#template").html());
         jq("#movies tbody").html(kendo.render(template, self._k_obj.view()));
-```
-
-then add to our DataSource:
-
-```python
-_functions = ['read']
-def __init__(self, opts):
-    KendoComponent.__init__(self, opts)
-    self.read()
 ```
 
 and in our `def opts` wrapper:

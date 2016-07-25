@@ -57,14 +57,14 @@ $ find . -name '*.py' | entr sh -c 'clear; rm -rf __javascript/* ; transcrypt yt
   <head>
     <meta charset="UTF-8" />
     <title>Observable Components</title>
-    <link rel="stylesheet" href="lib/kendo.common.min.css" />
-    <link rel="stylesheet" href="lib/kendo.blueopal.min.css" />
-    <script src="lib/jquery.min.js"></script>
-    <!--script src="lib/kendo.ui.core.min.js"></script-->
-    <script src="lib/kendo.core.js"></script>
+    <link rel="stylesheet" href="../lib/kendo.common.min.css" />
+    <link rel="stylesheet" href="../lib/kendo.blueopal.min.css" />
+    <script src="../lib/jquery.min.js"></script>
+    <!--script src="../lib/kendo.ui.core.min.js"></script-->
+    <script src="../lib/kendo.core.js"></script>
 kendo.calendar.js"></script>
-    <script src="lib/kendo.popup.js"></script>
-    <script src="lib/kendo.datepicker.js"></script>
+    <script src="../lib/kendo.popup.js"></script>
+    <script src="../lib/kendo.datepicker.js"></script>
   </head>
 
   <body>
@@ -496,17 +496,17 @@ This is how you use it:
   <head>
     <meta charset="UTF-8" />
     <title>Observable Components</title>
-    <link rel="stylesheet" href="lib/kendo.common.min.css" />
-    <link rel="stylesheet" href="lib/kendo.blueopal.min.css" />
-    <script src="lib/jquery.min.js"></script>
-    <!--script src="lib/kendo.ui.core.min.js"></script-->
-    <script src="lib/kendo.core.js"></script>
-    <script src="lib/kendo.data.js"></script>
-    <script src="lib/kendo.listview.js"></script>
-    <script src="lib/kendo.calendar.js"></script>
-    <script src="lib/kendo.popup.js"></script>
-    <script src="lib/kendo.datepicker.js"></script>
-    <script src="lib/kefir.js"></script>
+    <link rel="stylesheet" href="../lib/kendo.common.min.css" />
+    <link rel="stylesheet" href="../lib/kendo.blueopal.min.css" />
+    <script src="../lib/jquery.min.js"></script>
+    <!--script src="../lib/kendo.ui.core.min.js"></script-->
+    <script src="../lib/kendo.core.js"></script>
+    <script src="../lib/kendo.data.js"></script>
+    <script src="../lib/kendo.listview.js"></script>
+    <script src="../lib/kendo.calendar.js"></script>
+    <script src="../lib/kendo.popup.js"></script>
+    <script src="../lib/kendo.datepicker.js"></script>
+    <script src="../lib/kefir.js"></script>
   </head>
 
   <body>

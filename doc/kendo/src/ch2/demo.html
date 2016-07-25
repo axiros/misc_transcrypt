@@ -1,0 +1,97 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title></title>
+      <link rel="stylesheet" href="../lib/kendo.common.min.css" />
+      <link rel="stylesheet" href="../lib/kendo.default.min.css" /><Paste>
+      <script src="../lib/jquery.min.js"></script>
+      <script src="../lib/kendo.core.js"></script>
+      <script src="../lib/kendo.data.js"></script>
+      <script src="../lib/kendo.listview.js"></script>
+      <script src="../lib/kendo.calendar.js"></script>
+      <script src="../lib/kendo.popup.js"></script>
+      <script src="../lib/kendo.datepicker.js"></script>
+      <script src="__javascript__/pykendo.js"></script>
+  </head>
+  <body>
+
+                  <table id="movies">
+                      <thead>
+                          <tr>
+                              <th>Rank</th>
+                              <th>Rating</th>
+                              <th>Title</th>
+                              <th>Year</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td colspan="4"></td>
+                          </tr>
+                      </tbody>
+                  </table>
+
+
+              <script id="template" type="text/x-kendo-template">
+                  <tr>
+                      <td>#= rank #</td>
+                      <td>#= rating #</td>
+                      <td>#= title #</td>
+                      <td>#= year #</td>
+                  </tr>
+              </script>
+              <script>
+                  $(document).ready(function() {
+                      var movies = [
+                          { "rank": 1,  "rating": 9.2, "year": 1994, "title": "The Shawshank Redemption" },
+                          { "rank": 2,  "rating": 9.2, "year": 1972, "title": "The Godfather" },
+                          { "rank": 3,  "rating": 9,   "year": 1974, "title": "The Godfather: Part II" },
+                          { "rank": 4,  "rating": 8.9, "year": 1966, "title": "Il buono, il brutto, il cattivo." },
+                          { "rank": 5,  "rating": 8.9, "year": 1994, "title": "Pulp Fiction" },
+                          { "rank": 6,  "rating": 8.9, "year": 1957, "title": "12 Angry Men" },
+                          { "rank": 7,  "rating": 8.8, "year": 1975, "title": "One Flew Over the Cuckoo's Nest" },
+                          { "rank": 8,  "rating": 8.8, "year": 2010, "title": "Inception" },
+                          { "rank": 9,  "rating": 8.2, "year": 2008, "title": "The Dark Knight" }
+                      ];
+                      var ds = pykendo.MyDataSource( {data: movies});
+                  });
+              </script>
+
+  <div id="example">
+        <div class="demo-section k-content">
+
+            <h4>Show e-mails from:</h4>
+            <input id="pydatepicker" value="10/10/2011" style="width: 100%" />
+            <h4 style="margin-top: 2em;">Add to archive mail from:</h4>
+            <input id="pymonthpicker" value="November 2011" style="width: 100%" />
+            </p>
+        </div>
+    </div>
+
+
+    <script>
+    $ (document).ready(function() {
+        return
+        var d    = pykendo.DatePicker
+        var time = d._mod_time.time
+        var o = {'ts': time()-2 * 86400}
+        d(o, '#pydatepicker')
+        window['foo'] = d({
+        ts     : time(),
+        format : 'yyyy-MMMM',
+        start  : 'year',
+        depth  : 'year'}).mount('#pymonthpicker')
+    })
+    </script>
+
+
+
+
+
+          </div>
+
+
+  </body>
+  </html>
+
+

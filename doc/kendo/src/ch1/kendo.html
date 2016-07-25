@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>Observable Components</title>
+    <link rel="stylesheet" href="../lib/kendo.common.min.css" />
+    <link rel="stylesheet" href="../lib/kendo.blueopal.min.css" />
+    <script src="../lib/jquery.min.js"></script>
+    <!--script src="lib/kendo.ui.core.min.js"></script-->
+    <script src="../lib/kendo.core.js"></script>
+    <script src="../lib/kendo.data.js"></script>
+    <script src="../lib/kendo.listview.js"></script>
+    <script src="../lib/kendo.calendar.js"></script>
+    <script src="../lib/kendo.popup.js"></script>
+    <script src="../lib/kendo.datepicker.js"></script>
+    <script src="../lib/kefir.js"></script>
+  </head>
+
+  <body>
+
+    <div id="example">
+        <div class="demo-section k-content">
+
+            <h4>Show e-mails from:</h4>
+            <input id="pydatepicker" value="10/10/2011" style="width: 100%" />
+            <h4 style="margin-top: 2em;">Add to archive mail from:</h4>
+            <input id="pymonthpicker" value="November 2011" style="width: 100%" />
+            </p>
+        </div>
+    </div>
+
+
+    <script src="__javascript__/datepicker.js"></script>
+    <script>
+    $ (document).ready(function() {
+        // how we want it
+        var d    = datepicker.DatePicker
+        var time = d._mod_time.time
+        d({'ts': time()-2 * 86400}, '#pydatepicker')
+        window['foo'] = d({
+        ts     : time(),
+        format : 'yyyy-MMMM',
+        start  : 'year',
+        depth  : 'year'}).mount('#pymonthpicker')
+    })
+    </script>
+
+  </body>
+</html>
