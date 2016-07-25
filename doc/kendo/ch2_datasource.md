@@ -7,12 +7,13 @@
 	- [Example Implementation](#example-implementation)
 	- [Rewrite to Python](#rewrite-to-python)
 	- [Refactoring](#refactoring)
-			- [DataSource](#datasource)
+		- [DataSource](#datasource)
 		- [DatePicker](#datepicker)
 		- [KendoComponent, KendoWidget](#kendocomponent-kendowidget)
 	- [Wiring the Callbacks](#wiring-the-callbacks)
 
 <!-- tocstop -->
+
 
 
 This is the central component of kendo to feed widgets with data - from server or from local memory backed information.
