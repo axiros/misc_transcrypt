@@ -239,10 +239,11 @@ __pragma__('alias', 'jq', '$')
 class Grid(KendoWidget):
     _functions = []
     _k_cls = jq().kendoGrid.widget
-```    
+```
+
 and the feature to get parametrized via class vars only in `datasource.py`:
 
-```
+```python
 def __init__(self, opts):
     if opts == undefined:
         opts = {}
