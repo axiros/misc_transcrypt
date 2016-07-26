@@ -30,10 +30,7 @@ def decorate(cls, func, dfunc):
 
 
 def name_value_pairs(l):
-    ret = []
-    for k, v in l:
-        ret.append({'name': k, 'value': v})
-    return ret
+    return [[{'name': k, 'value': v}] for k, v in l]
 
 
 def camelize(s):
