@@ -1,5 +1,15 @@
 import time
 
+def die(err_type, *a):
+    p = ['!!']
+    for obj in a:
+        if obj.__repr__:
+            p.append(obj.__repr__())
+        else:
+            p.append(obj)
+    console.log.apply(console, p)
+    throw (__new__( Error(err_type)))
+
 
 def decorate(cls, func, dfunc):
     """
@@ -30,7 +40,7 @@ def decorate(cls, func, dfunc):
 
 
 def name_value_pairs(l):
-    return [[{'name': k, 'value': v}] for k, v in l]
+    return [{'name': k, 'value': v} for k, v in l]
 
 
 def camelize(s):

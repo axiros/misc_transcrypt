@@ -1,9 +1,14 @@
 import tools
+die = tools.die
+
 class KendoComponent:
     _k_cls, _k_obj = None, None # the kendo component and instance
     # containing direct callable functions, e.g. open on a datepicker:
     # to be set by a descendant
     _functions = None
+
+    def __repr__(self):
+        return self.__class__.__name__
 
     def __init__(self, opts):
         opts = dict(opts)
@@ -28,7 +33,12 @@ class KendoComponent:
             # setting the functions into our selfes, take care of 'this' in the
             # funcs:
             for k in self._functions:
-                setattr(self, k, getattr(self._k_obj, k).bind(self._k_obj))
+                orig = getattr(self._k_obj, k)
+                if not orig:
+                    die('ValueError', self,
+                        'Kendo widget does not provide function:', k)
+                setattr(self, k, orig.bind(self._k_obj))
+
         return self
 
     def opts(self):
@@ -45,9 +55,6 @@ class KendoComponent:
                     if k.startswith('on_'):
                         jsopts[k[3:]] = v
         return jsopts
-
-
-
 
 
 __pragma__('alias', 'jq', '$')
