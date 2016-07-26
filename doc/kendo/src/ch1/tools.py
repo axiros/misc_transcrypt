@@ -15,10 +15,7 @@ class PyDate:
     def get_value(self):
         ''' the js Date we return is based on the unixtime ts '''
         if self._value:
-            try:
-                t = self._value.getTime() / 1000
-            except:
-                debugger
+            t = self._value.getTime() / 1000
             if t == self.ts:
                 return self._value
         # will set the new self._value to self.ts and return it

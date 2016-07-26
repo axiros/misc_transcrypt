@@ -1,13 +1,19 @@
 import time
 
+def name_value_pairs(l):
+    ret = []
+    for k, v in l:
+        ret.append({'name': k, 'value': v})
+    return ret
+
+
 def camelize(s):
     ''' kendo wants camelCase, we want snake_case '''
     s = s.split('_')
     r = s[0]
     for part in s[1:]:
-        r += part[0].lower() + part[1:]
+        r += part.capitalize()
     return r
-
 
 
 
@@ -27,10 +33,7 @@ class PyDate:
     def get_value(self):
         ''' the js Date we return is based on the unixtime ts '''
         if self._value:
-            try:
-                t = self._value.getTime() / 1000
-            except:
-                debugger
+            t = self._value.getTime() / 1000
             if t == self.ts:
                 return self._value
         # will set the new self._value to self.ts and return it

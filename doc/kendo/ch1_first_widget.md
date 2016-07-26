@@ -258,7 +258,7 @@ Well thats from the code we saw previously: The widget 'classes' (better: plugin
 
 Hmm, we can't call `new` from Transcrypt. What is new doing?
 
-*found out only later that we *CAN* use `new` in TS: `instance = __new__(MyClass(...))` - but I tried to do without - first*
+*found out only later that we CAN use `new` in TS: `instance = __new__(MyClass(...))` - but I tried to do without - first*
 
 Reverse engineer the `new widget`: `debugger; new widget(jel, {})`, reload, step into:
 
@@ -358,7 +358,7 @@ For this, python property functions and multiple inheritance features come handy
 
 1. We say in the widget module `import time, tools`. Regarding `import time` see the addendum to this chapter.
 
-2. Inherit `class DatePicker(tools.PyDate):
+2. Inherit `class DatePicker(tools.PyDate)`:
 
 3. And create a PyDate class, for everybody else who wants such a ts / value mapping in the future:
 
@@ -380,10 +380,7 @@ class PyDate:
     def get_value(self):
         ''' the js Date we return is based on the unixtime ts '''
         if self._value:
-            try:
-                t = self._value.getTime() / 1000
-            except:
-                debugger
+            t = self._value.getTime() / 1000
             if t == self.ts:
                 return self._value
         # will set the new self._value to self.ts and return it

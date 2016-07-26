@@ -1,0 +1,29 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title></title>
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.common.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.default.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.default.mobile.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.dataviz.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.dataviz.default.min.css" />
+      <script src="../lib_pro/js/jquery.min.js"></script>
+      <script src="../lib_pro/js/kendo.all.min.js"></script>
+      <script src="__javascript__/pykendo.js"></script>
+  </head>
+  <body>
+      <input class="themeChooser" value="default" />
+      <script>
+        $ (document).ready(function() {
+             pykendo.ThemeRoller({}, '.themeChooser');})
+      </script>
+      <hr>
+
+      <div id="mygrid"></div>
+      <script>
+            $ (document).ready(function() { pykendo.MyGrid({}, '#mygrid')})
+      </script>
+  </body>
+  </html>
+
+
