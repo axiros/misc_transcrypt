@@ -20,7 +20,7 @@ For this purpose we are going to invest more work into our `DataSource` class, s
 
 To visualize the datasource's state, the powerful [Kendo Grid](http://demos.telerik.com/kendo-ui/grid/index) widget is ideal.
 
-Downside: The widget is not included in the free Kendo core set but requires a **commercial license**. So, if you want to not only read but also continue to try the tutorial, please download an unrestricted trial license for free and place the files into the `lib_pro` folder as explained [there](../lib_pro/).
+Downside: The widget is not included in the free Kendo core set but requires a **commercial license**. So, if you want to not only read but also continue to try the tutorial, please download an unrestricted trial license for free and place the files into the `lib_pro` folder as explained [there](./src/lib_pro/).
 
 ----
 Lets change our baselibs to using full kendo-ui:
