@@ -47,7 +47,7 @@ Note: Since we (think) we understand Kendoui / Transcrypt integration mechanics,
 
 Before we get serious, first a little [Intermission](https://www.youtube.com/watch?v=O0wOD9TWynM): Lets add a theme roller widget. Why? Because we can.
 
-Seriously: Its also instructive and me looking at the same pixels all the time I tend to get bored.
+Seriously: It is also instructive and me looking at the same pixels all the time I tend to get bored.
 
 [Here](http://jsfiddle.net/gyoshev/Gxpfy/) is the blueprint.
 
@@ -64,7 +64,7 @@ Thats how we want it:
 ```
 ### Implementation
 
-We [see](http://jsfiddle.net/gyoshev/Gxpfy/) that its based on kendo's dropdownList, so we first build this:
+We [see](http://jsfiddle.net/gyoshev/Gxpfy/) that it is based on kendo's dropdownList, so we first build this:
 
 #### DropDownList - Snake Case to CamelCase for the Props
 
