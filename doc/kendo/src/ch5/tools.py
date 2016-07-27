@@ -43,6 +43,8 @@ def d(*a):
     with the map a pure js obj.
     '''
     r = a[0]
+    if not r:
+        __pragma__('js', '{}', 'return {}')
     del r['constructor']
     del r['__class__']
     return r

@@ -21,7 +21,7 @@ class DataSource(KendoComponent):
         od = dict(opts)
         url = od.pop('url', self.url)
         transport = od['transport'] or self.transport
-        #data = od['data'] or self.data # local data?
+        data = od['data'] or self.data # local data?
         if not transport:
             od['transport'] = {
                     'read': {
@@ -30,7 +30,7 @@ class DataSource(KendoComponent):
         KendoComponent.__init__(self, opts)
         self.read()
 
-    def on_cange(self, *a):
+    def on_change(self, *a):
         print('data changed')
 
 

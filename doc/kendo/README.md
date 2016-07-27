@@ -9,6 +9,15 @@
 [Chapter Four](./ch4_server_interaction_two_way.md) Two Way Server Interaction
 (and a theme roller)
 
+## Commerical Code
+
+In chapter 4 we are switching from the open source version of KendoUI to a commercial one, integrating its data grid. Why? Because in my company this is currently being used and we are piling up chunks of badly maintainable javascript to customize it. Thats why I integrate it within Transcrypt and the documentation of the journey may help you integrating other, similar tools from the js world.
+
+You can follow the tutorial by downloading a trial version which is free of charge.
+
+> I would be glad to get a note if someone integrates e.g. [`aggrid`](https://www.ag-grid.com/) or even [`OpenUI5`](https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.GridLayout.html) into Transcrypt. Both are equally great, if not better - plus free.
+
+
 
 ## Code Organization
 

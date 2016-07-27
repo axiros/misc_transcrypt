@@ -1,26 +1,31 @@
-# Chapter 4: Two Way Server Interaction
+
+# Chapter 4: Kendo Grid
 
 
 <!-- toc -->
 
-- [Chapter 4: Two Way Server Interaction](#chapter-4-two-way-server-interaction)
+- [Chapter 4: Kendo Grid](#chapter-4-kendo-grid)
 	- [Interlude: Theme Roller](#interlude-theme-roller)
 		- [Usage](#usage)
 		- [Implementation](#implementation)
 			- [DropDownList - Snake Case to CamelCase for the Props](#dropdownlist-snake-case-to-camelcase-for-the-props)
 		- [Results](#results)
 	- [The Kendo Grid](#the-kendo-grid)
+		- [Schemas](#schemas)
+			- [Using __pragma__('kwargs')](#using-__pragma__kwargs)
+			- [And Doing it Better](#and-doing-it-better)
 
 <!-- tocstop -->
 
 
-Now we want to not only GET from - but also POST data TO the server.
 
-For this purpose we are going to invest more work into our `DataSource` class, so that it supports models and schemas and write transport mode.
+We are going to invest more work into our `DataSource` class, so that it supports models and schemas.
 
 To visualize the datasource's state, the powerful [Kendo Grid](http://demos.telerik.com/kendo-ui/grid/index) widget is ideal.
 
 Downside: The widget is not included in the free Kendo core set but requires a **commercial license**. So, if you want to not only read but also continue to try the tutorial, please download an unrestricted trial license for free and place the files into the `lib_pro` folder as explained [there](./src/lib_pro/).
+
+As already explained in the Readme I would be glad to get a note if someone integrates [`aggrid`](https://www.ag-grid.com/), [`OpenUI5`](https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.GridLayout.html), which are also great, if not better, plus free.
 
 ----
 Lets change our baselibs to using full kendo-ui:
@@ -186,10 +191,9 @@ Personally I'm at a point where I must say that this is the best time I ever had
 
 After this recreational round, lets get busy again.
 
-The [grid](http://demos.telerik.com/kendo-ui/grid/remote-data-binding) is the [most powerful](http://docs.telerik.com/kendo-ui/api/javascript/ui/grid) widget KendoUI has to offer and the reason my company licensed it.
+The [grid](http://demos.telerik.com/kendo-ui/grid/remote-data-binding) is the [most powerful](http://docs.telerik.com/kendo-ui/api/javascript/ui/grid) widget KendoUI has to offer.
 
-If we master this we master everything.
-
+If we master this we master everything ;-)
 
 As with the datasource we create a custom specific instance based on the first example [here](http://demos.telerik.com/kendo-ui/grid/index) directly in our imported Transcrypt js.
 
@@ -262,3 +266,90 @@ Running `~/demo/ch4/server $ json-server --watch db.json`, reloading the browser
 
 
 <img src="c4_ds1.png" width="600">
+
+All right, lets further dig down the rabbit hole.
+
+### Schemas
+
+Straight forward adding of a schema parameter gives us e.g. type specific filters:
+
+```python
+class MyGridDataSource(DataSource):                                                                                                                             
+    #type = 'jsonp'                                                                                                                                             
+    url = "http://localhost:3000/movies"                                                                                                                        
+    schema = {                                                                                                                                                  
+            'model': {                                                                                                                                          
+                'id': 'rank',                                                                                                                                   
+                'fields': {                                                                                                                                     
+                    'rank': {'type': 'number'}                                                                                                                  
+                   ,'rating': {'type': 'number'}                                                                                                                
+                   ,'year': {'type': 'number'}                                                                                                                  
+                   ,'title': {'type': 'string'}                                                                                                                 
+                   }}}                                                                                                                                          
+
+```
+
+and
+
+```python
+class MyGrid(Grid):                                                                                                                                             
+    data_source = MyGridDataSource()                                                                                                                            
+    height = 550                                                                                                                                                
+    sortable = groupable = filterable = True           
+```
+
+<img src="c4_6.png" width="200">
+
+#### Using __pragma__('kwargs')
+
+I like this better than the string mess above, matter of taste...
+```python
+schema = d(model=d(                                                                                                                                         
+			id='rank',                                                                                                                                      
+			fields=d(                                                                                                                                       
+				rank   = d(type='number')                                                                                                                   
+			   ,rating = d(type='number')                                                                                                                   
+			   ,year   = d(type='number')                                                                                                                   
+			   ,title  = d(type='string'))))          
+```
+
+How is `d` working?
+
+In CPython I often do it like: `def d(**kw): return kw` to get the effect.
+
+To feed kendo though, we have to take care to return a pure JS map.
+So this is the `d` function in Transcrypt:
+
+```python
+__pragma__ ('kwargs')
+def d(**kw):
+    __pragma__('js', '{}', '''
+    var r = {}, v
+    for (var k in kw) {
+        v = kw[k];
+        if (k == '__class__') continue
+        if (typeof(v) != "function") {r[k] = v}
+    }
+    return r
+    ''')
+__pragma__ ('nokwargs')
+
+```
+
+so we locally told the Transcrypt interpreter to build all the mess required for kw args in python. Insert a tracepoint to appreciate the effort...
+
+Performance wise: Hey, we are doing this once - for a full grid table. Forget the argument ;-)
+
+#### And Doing it Better
+
+after looking long enough at the js version with the pragmas, we gave this one a try:
+
+```python
+def d(*a):
+    r = a[0]
+    del r['constructor']
+    del r['__class__']
+    return r
+````
+
+and it works as well. Better that, no kwargs parsing bloat :-)

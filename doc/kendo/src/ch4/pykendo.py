@@ -17,15 +17,24 @@ class MyDataSource(DataSource):
         jq("#movies tbody").html(kendo.render(template, self._k_obj.view()));
 
 
+
+from tools import d
 class MyGridDataSource(DataSource):
     #type = 'jsonp'
     url = "http://localhost:3000/movies"
+    schema = d(model=d(
+                id='rank',
+                fields=d(
+                    rank   = d(type='number')
+                   ,rating = d(type='number')
+                   ,year   = d(type='number')
+                   ,title  = d(type='string'))))
 
 
 class MyGrid(Grid):
     data_source = MyGridDataSource()
     height = 550
-    sortable = groupable = True
+    sortable = groupable = filterable = True
     pageable = {'refresh': True, 'pageSizes': True, 'buttonCount': 5}
     columns = [{'field': "rank",
                 'title': "Rank",

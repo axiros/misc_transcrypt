@@ -20,9 +20,11 @@
       <hr>
 
       <div id="mygrid"></div>
-      <script>
-            $ (document).ready(function() { pykendo.MyGrid({}, '#mygrid')})
-      </script>
+    <script>
+      $ (document).ready(function() { pykendo.NestedDataGrid({
+                   'base_url': 'http://127.0.0.1:8080/v1'},
+                   '#mygrid')})
+    </script>
   </body>
   </html>
 
