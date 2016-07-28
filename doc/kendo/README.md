@@ -9,6 +9,12 @@
 [Chapter Four](./ch4_server_interaction_two_way.md) Two Way Server Interaction
 (and a theme roller)
 
+[Chapter Five](./ch5_complex_grids.md) Complex Multiinstance Grids
+
+[Chapter Six](./ch6_reactive_redux.md) FRT: Reactive Redux
+
+
+
 ## Commerical Code
 
 In chapter 4 we are switching from the open source version of KendoUI to a commercial one, integrating its data grid. Why? Because in my company this is currently being used and we are piling up chunks of badly maintainable javascript to customize it. Thats why I integrate it within Transcrypt and the documentation of the journey may help you integrating other, similar tools from the js world.
