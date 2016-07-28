@@ -8,9 +8,9 @@
 		- [Stream Processing](#stream-processing)
 				- [lambdas anyone?](#lambdas-anyone)
 	- [Streams containing Objects?](#streams-containing-objects)
-	- [Redux](#redux)
+	- [Centralized State](#centralized-state)
 		- [Why is this better?](#why-is-this-better)
-	- [FRT: (FRP, Redux, Transcrypt)](#frt-frp-redux-transcrypt)
+	- [FRT: FRP, Redux, Transcrypt](#frt-frp-redux-transcrypt)
 		- [Setup](#setup)
 			- [Implementation](#implementation)
 		- [Transcrypt Dicts versus JS Dicts](#transcrypt-dicts-versus-js-dicts)
@@ -86,7 +86,7 @@ But do we actually need the widget objects within the streams to update them onc
 
 Actually no: Better is this design:
 
-## Redux
+## Centralized State
 
 1. widget instantiates, gets an id, registers at an app wide id to object cache.
 
@@ -111,7 +111,7 @@ The concept again:
 
 Enough talking, lets do that now.
 
-## FRT: (FRP, Redux, Transcrypt)
+## FRT: FRP, Redux, Transcrypt
 
 ### Setup
 
