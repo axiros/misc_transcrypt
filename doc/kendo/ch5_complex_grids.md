@@ -53,14 +53,13 @@ We've put some sample meta information about those nested tables into in importa
 Important are the parent child relations:
 
 ```python
-'childs_by_parent': [ ['Ticket', ['TicketLog']],                                                                                                          
-                      ['TicketLog', []],                                                                                                                  
-                      ['Enterprise',                                                                                                                      
-                           ['Ticket', 'DDI', 'Location', 'User']],                                                                                             
-                      ['DDI', ['Ticket']],                                                                                                                
-                      ['Location', ['Ticket', 'User', 'Number']],                                                                                         
-                      ['User', ['Ticket']],                                                                                                               
-                      ['Number', []]],                  
+'childs_by_parent': [ ['Ticket',     ['TicketLog']],                                                                                                          
+                      ['TicketLog',  []],                                                                                                                  
+                      ['Enterprise', ['Ticket', 'DDI', 'Location', 'User']],                                                                                             
+                      ['DDI',        ['Ticket']],                                                                                                                
+                      ['Location',   ['Ticket', 'User', 'Number']],                                                                                         
+                      ['User',       ['Ticket']],                                                                                                               
+                      ['Number',     []]],                  
 ```
 which means there is a child type ticket log below parent type ticket or e.g. Ticket below DDI.
 
@@ -73,9 +72,9 @@ This is how we want it:
 ```js
 <div id="mygrid"></div>
 <script>
-      $ (document).ready(function() { pykendo.NestedDataGrid({
-                   'base_url': 'http://127.0.0.1:8081/v1'},
-                   '#mygrid')})
+      $ (document).ready(function() {
+		  pykendo.NestedDataGrid({
+                   'base_url': 'http://127.0.0.1:8081/v1'}, '#mygrid')})
 </script>
 ```
 
@@ -95,14 +94,14 @@ we've a `bottle.py`](http://bottlepy.org/docs/dev/api.html) into our server dire
 from bottle import static_file
 @route('/app/<filepath:path>')
 def server_static(filepath):
-    return static_file(filepath, root='/Users/klessinger/GitHub/misc_transcrypt/doc/kendo/src')
+    return static_file(filepath,
+	       root='/Users/klessinger/GitHub/misc_transcrypt/doc/kendo/src')
 
 
 import json
 from bottle import route, run, template, response
 def j(data):
     response.add_header('Content-Type', 'application/json')
-    return json.dumps(data['DDI']['columns'], indent=2, sort_keys=True)
     return json.dumps({'data': {'post': data}}, indent=2, sort_keys=True)
 
 @route('/v1')

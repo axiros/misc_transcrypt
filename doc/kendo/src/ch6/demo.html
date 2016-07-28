@@ -1,0 +1,32 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title></title>
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.common.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.materialblack.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.materialblack.mobile.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.dataviz.min.css" />
+      <link rel="stylesheet" href="../lib_pro/styles/kendo.dataviz.materialblack.min.css" />
+      <script src="../lib_pro/js/jquery.min.js"></script>
+      <script src="../lib_pro/js/kendo.all.min.js"></script>
+      <script src="../lib_pro/3rd/kefir.js"></script>
+      <script src="../lib_pro/3rd/redux-kefir.js"></script>
+      <script src="../lib_pro/3rd/redux.js"></script>
+      <script src="__javascript__/pykendo.js?foo="></script>
+  </head>
+  <body>
+      <input class="themeChooser" value="materialblack" />
+      <script>
+        $ (document).ready(function() {
+             pykendo.ThemeRoller({}, '.themeChooser');})
+      </script>
+      <hr>
+
+      <div id="mygrid"></div>
+    <script>
+        $ (document).ready(function() { pykendo.test_kefir()})
+    </script>
+  </body>
+  </html>
+
+
