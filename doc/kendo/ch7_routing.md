@@ -177,7 +177,7 @@ have rendered:
  1. Comp1 at app's #main
  1. Comp2 at comp1's #sub
 
-but, as a complication, anticipating that the #sub mountpoint will only be available when Comp1 has the data we want the Comp2 instantiation & mounting only be done once Comp1 has that data.
+**but, as a complication, anticipating that the #sub mountpoint will only be available when Comp1 has the data we want the Comp2 instantiation & mounting only be done once Comp1 has that data(!)**
 
 How do we do that. I think only the component itself can know if the subs can be instantiated in sync (like: app knows that top can be instantiated right away) or if data is missing.
 
