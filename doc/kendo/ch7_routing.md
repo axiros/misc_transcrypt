@@ -196,7 +196,7 @@ The sync version of the routing, i.e. when it instantiates the whole tree is pre
 <img src="./c7_2.png" width="300"></img>
 
 
-*[Commit](../../commit/96ae3dd285208531b793c7e317afbb2b39251d30), redux.py and pykendo.py are the interesting modules.*
+*[Commit](./../../commit/96ae3dd285208531b793c7e317afbb2b39251d30), redux.py and pykendo.py are the interesting modules.*
 
 ##### Key Achievements
 
@@ -215,7 +215,7 @@ We try that assumption and go with this first Router implementation:
 
 <img src="./c7_3.png" width="300"></img>
 
-*Commit hash is [this](../../commit/090b3e5) ('async router'), again redux.py and pykendo.py are the interesting modules and also the renderer.*
+*[commit](./../../commit/090b3e5) ('async router'), again redux.py and pykendo.py are the interesting modules and also the renderer.*
 
 - If you try the time slider you'll see that the components neatly mount and unmount into/from the DOM.
 - The state of the components remains stored, so no new data fetches when going back, then forward in time, since its the router itself how, when no data is present, triggers the fetch.
