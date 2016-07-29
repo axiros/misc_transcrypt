@@ -271,7 +271,9 @@ def f():
 				{'#sub': {'cls': 'Top'}}}})
 window.setTimeout(f, 1000)
 ```
+
 and the time slider works like expected.
+
 
 ### Auto Unmount
 
@@ -279,4 +281,25 @@ Question left: When we inject a route for a new component (like here 'Top') on a
 
 Can't really explain why but have the gut feeling that we should.
 
-Lets do this.
+[Here](https://github.com/axiros/misc_transcrypt/commit/e3f9792) is the change, which unmounts recursively all components previously mounted.
+
+### Addressing a Merging Problem
+
+Looking closely we find that a `route_update` induced swap of Comp2 with Top produced a funny principal state for Top: A *merge* of previous Comp2 principal state with that of Top.
+Clear, we handle the route updates via deep copies and jquery.extend did exactly that.
+
+[This]((https://github.com/axiros/misc_transcrypt/commit/90d2ed2) fixes that, using lodash's wonderful `mergeWith` function.
+
+```python
+if comp_id == 'route':
+	 def f(t, s):
+		 # avoid merging state!
+		 if 'state' in s:
+			 for k in s.keys():
+				 t[k] = s[k]
+	 lodash.mergeWith(ns, action.data, f)
+```
+As you can see we even allow, as a feature, to transfer the principal state of the old component into the new one - if you omit the state map in the route_update.
+
+
+### Updates from URL Changes

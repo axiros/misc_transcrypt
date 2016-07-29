@@ -147,7 +147,9 @@ class ReduxApp:
             # deep copy for route updates
             if comp_id == 'route':
                 def f(t, s):
-                    return
+                    # avoid merging state!
+                    # if new route does not contain state we transfer that of
+                    # the old one:
                     if 'state' in s:
                         for k in s.keys():
                             t[k] = s[k]
