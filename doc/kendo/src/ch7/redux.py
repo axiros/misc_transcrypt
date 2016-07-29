@@ -136,9 +136,15 @@ class ReduxApp:
 
         ns['action'] = action.type
         for comp_id, kv in d.items():
+            if action.type == 'life_cycle':
+                if len(d.unmount):
+                    for id in d.unmount:
+                        if id in state:
+                            del state[id]
+                    continue
+
             # deep copy for route updates
             if comp_id == 'route':
-                r = ns.route
                 jq.extend(True, {}, jq.extend(True, ns, action.data))
                 continue
 
@@ -210,4 +216,28 @@ class ReduxApp:
                 success=success, error=success,
                 context=dj(comp=comp, app=self))
         jq.ajax(opts)
+
+
+
+    # registry functions:
+    def get_subs(self, container, select, excl_id, deep):
+        ''' get all sub components of a component '''
+        if not excl_id:
+            excl_id = 'xxx'
+        cid = container.id
+        subs = [ [id, c] for id, c in self.components_by_id.items() \
+                 if id.startswith(cid) and not id in [excl_id, cid] ]
+        if not select:
+            return subs
+
+        ssubs = [[id, c] for id, c in subs if c.select == select]
+        if not deep:
+            return ssubs
+        ret = []
+
+        for cid, ccomp in ssubs:
+            ret.extend([[id, c] for id, c in subs if c.id.startswith(cid)])
+
+        return ret
+
 

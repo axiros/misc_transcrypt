@@ -55,13 +55,13 @@ It would be nice to decide via simple adding to a list which params are principl
 Say our route parametrizes two nested components. The second one can only be mounted when the first has the data (see kendo detail grid). That means that URL -> Component tree via router can't be done in one syncronous function, but must be step by step with parent components signaling to router that they are ready for it to instantiate the component, deeper in the tree. That does not apply to components which don't need server data though.
 
 
-Lets do this now:
+Lets do this now.
 
-## Implementation
+First a simple helper to render our components:
 
-### Simple Renderer
+## Simple Renderer
 
-First we put the redux component related classes into a module and create a little state renderer into the dom, so that we see the updates:
+We put the redux component related classes into a module and create a little state renderer into the DOM, so that we see the updates:
 
 ```python
 from redux import ReduxApp, ReduxComponent
@@ -119,12 +119,16 @@ def run(sel):
 
 We can follow the state updates using the debugger. data is already fetched async from the server.
 
-### Router
+## Router First FuncSpec
 
-Now more realistic, using the router. For now we don't care about route parameter serialization into one string with slashes as seperators (see `uniloc.js`) but will deserialize a json structure from the URL, as is. Later we'll invent a clever serialization format.
+Now more realistic, using the router.
+
+Important is to not think in terms of URLs but in terms of data structures, the router has to act upon.
+
+So for now we don't care about route parameter serialization into one string with slashes as seperators (see `uniloc.js`) but will deserialize a json structure from the URL, as is. Later we'll find a clever serialization format.
 
 
-We would like to have sth like
+Given a setup like
 
 ```python
 class App(RC, PSR):
@@ -172,14 +176,14 @@ def run(sel):
 ```
 
 
-have rendered:
+This should be rendered like follows:
 
  1. MyApp
  1. Top at app's #top
  1. Comp1 at app's #main
  1. Comp2 at comp1's #sub
 
-**but, as a complication, anticipating that the #sub mountpoint will only be available when Comp1 has the data we want the Comp2 instantiation & mounting only be done once Comp1 has that data(!)**
+**but, as a complication (anticipating that the #sub mount point will only be available when Comp1 has the data) we want the Comp2 instantiation & mounting only be done once Comp1 has that data(!)**
 
 How do we do that. I think only the component itself can know if the subs can be instantiated in sync (like: app knows that top can be instantiated right away) or if data is missing.
 
@@ -200,15 +204,14 @@ The sync version of the routing, i.e. when it instantiates the whole tree is pre
 
 *[Commit](https://github.com/axiros/misc_transcrypt/commit/96ae3dd285208531b793c7e317afbb2b39251d30), redux.py and pykendo.py are the interesting modules.*
 
-#####  Achievements
 
-1. As you can see from the shot we went away from random instance IDs to IDs derived from hirarchy, classname and principal state parameters and their values.
-
+As you can see from the shot we went away from random instance IDs to IDs derived from hierarchy, classname and principal state parameters and their values.
 
 
-### Going Async: Data Backed Components - Either / Or. A Valid Assumption ?
 
-Is it valid to assume that a component requires either data, then route realization is only complete once data is there - or it has no data then it can be syncronously completed.
+### Async Routing: Data Backed Components Have Exactly One Endpoint - A Valid Assumption ?
+
+Is it valid to assume that a component requires either data, then route realization is only complete once data is there - OR it has no data and then it can be syncronously completed.
 
 In other words: Isn't it bad design to have components with more than one data backing endpoints on the server? We think yes. E.g. a top bar with a user email dropdown and a general server state dropdown should be designed with two subcomponents which are individually data-backed but not as one big component.
 
@@ -252,3 +255,28 @@ if call:
 
 
 ## Route Updates
+
+Lets now extend our router to understand dynamic route injections (and fixing a bug in the deep copy).
+
+[Here](https://github.com/axiros/misc_transcrypt/commit/d06918a) the commit. After a second, Comp2 within Comp1 is exchanged with another instance of Top, due to
+
+```python
+app = MyApp(d(route=route))
+window.app = app
+def f():
+	app.foo = 1
+	app.dispatch('route_update', 'route',
+		{'#mygrid':
+			{'#main':
+				{'#sub': {'cls': 'Top'}}}})
+window.setTimeout(f, 1000)
+```
+and the time slider works like expected.
+
+### Auto Unmount
+
+Question left: When we inject a route for a new component (like here 'Top') on a place where another one resides (like here div '#sub' within Comp1), should we better call unmount on the old one before creating the new one?
+
+Can't really explain why but have the gut feeling that we should.
+
+Lets do this.

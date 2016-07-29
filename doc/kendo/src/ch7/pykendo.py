@@ -59,26 +59,30 @@ class ReduxRouter:
         die(cls, 'not found in', container)
 
 
+
+
+
     def realize_route(self, container, route):
         console.log('realizing route in', container.id, route, self.r_state)
-        #if self.foo:
-        #    dumps(route)
-        #    debugger
 
-        for sel, comp in route.items():
+        for sel, target in route.items():
             # comp instances are id'ed by their type plus principal state:
-            store_id = self.build_store_id(container, comp)
+            store_id = self.build_store_id(container, target)
+            mounted = self.get_subs(container, sel, store_id, True)
+            if len(mounted):
+                ids = [id for id, v in mounted]
+                self.dispatch('life_cycle', 'unmount', ids)
+
             instance = self.components_by_id[store_id]
             if not instance:
-                clsname = comp.cls
-                cls = self.find_class(container, clsname)
-                m = {}
+                clsname = target.cls
+                cls = self.find_class(container, clsname,)
 
                 instance = cls( id         = store_id,
                                 app        = self,
                                 select     = sel,
-                                init_state = comp.state,
-                                container  = container)
+                                init_state = target.state,
+                                container  = container )
 
             __pragma__('js', '{}', 'var need_data = instance.data === null')
             need_data = False
@@ -92,10 +96,10 @@ class ReduxRouter:
             if need_data:
                 # we dont' go deeper in this one - only when data is there:
                 continue
-            for k in comp.keys():
+            for k in target.keys():
                 if k in ['cls', 'state']:
                     continue
-                self.realize_route(instance, {k: comp[k]})
+                self.realize_route(instance, {k: target[k]})
         if container == self:
             console.log('route complete', route)
             self.route_finished = 1
