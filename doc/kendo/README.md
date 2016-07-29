@@ -13,6 +13,7 @@
 
 [Chapter Six](./ch6_reactive_redux.md) FRT: Reactive Redux
 
+[Chapter Seven](./ch7_routing.md) Routing
 
 
 ## Commerical Code
@@ -33,3 +34,12 @@ You can follow the tutorial by downloading a trial version which is free of char
   libs requiring a commercial license are gitignored. You can download demo
   versions though, fully functional.
 - We do not use CDNs since we disable the browser cache during development.
+
+
+## Gotchas
+
+Here a list for wtf avoidance:
+
+1. Don't use 'selector' as parameter name, its used in `__builtin__` for jquery compat, treat it like a reserved word.
+1. Nested classes are not supported, to get the effect define them outside and reference them via params in your parent class
+1. Decorators not supported in the annotation style way but see [here](https://github.com/JdeH/Transcrypt/issues/92) how its done - and better
