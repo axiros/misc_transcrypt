@@ -2,6 +2,7 @@ from tools import d, dj, dumps, log
 
 
 __pragma__('alias', 'jq', '$') # only for ajax, replace maybe with sth lighter
+__pragma__('alias', 'lodash', '_') # only for ajax, replace maybe with sth lighter
 def s_log(x):
     """stream log """
     console.log('store stream event. store current state:', x)
@@ -145,7 +146,14 @@ class ReduxApp:
 
             # deep copy for route updates
             if comp_id == 'route':
-                jq.extend(True, {}, jq.extend(True, ns, action.data))
+                def f(t, s):
+                    return
+                    if 'state' in s:
+                        for k in s.keys():
+                            t[k] = s[k]
+                lodash.mergeWith(ns, action.data, f)
+
+                #ns = jq.extend(True, ns, action.data)
                 continue
 
             comp = self.components_by_id[comp_id]

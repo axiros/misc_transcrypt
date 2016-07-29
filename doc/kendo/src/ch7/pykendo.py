@@ -134,13 +134,13 @@ route = {
         "#main": {
             "cls": "Comp1",
             "state": {
-            "id1": "bar"
+                "id1": "bar"
             },
             "#sub": {
-            "cls": "Comp2",
-            "state": {
-                "id2": "foo"
-            }
+                "cls": "Comp2",
+                "state": {
+                    "id2": "foo"
+              }
             }
         },
         "#top": {
@@ -157,7 +157,7 @@ def run(sel):
         app.dispatch('route_update', 'route',
             {'#mygrid':
                 {'#main':
-                    {'#sub': {'cls': 'Top'}}}})
+                    {'#sub': {'cls': 'Top', 'state': {'top': 23}}}}})
     window.setTimeout(f, 1000)
 
 
