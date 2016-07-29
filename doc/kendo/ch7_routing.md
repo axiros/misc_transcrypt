@@ -171,10 +171,11 @@ def run(sel):
 
 
 have rendered:
-1. MyApp
-1. Top at app's #top
-1. Comp1 at app's #main
-1. Comp2 at comp1's #sub
+
+ 1. MyApp
+ 1. Top at app's #top
+ 1. Comp1 at app's #main
+ 1. Comp2 at comp1's #sub
 
 but, as a complication, anticipating that the #sub mountpoint will only be available when Comp1 has the data we want the Comp2 instantiation & mounting only be done once Comp1 has that data.
 
