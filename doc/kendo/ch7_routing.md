@@ -214,6 +214,7 @@ In other words: Isn't it bad design to have components with more than one data b
 We try that assumption and go with this first Router implementation:
 
 <img src="./c7_3.png" width="300"></img>
+
 *Commit hash is #090b3e5 ('async router'), again redux.py and pykendo.py are the interesting modules and also the renderer.*
 
 - If you try the time slider you'll see that the components neatly mount and unmount into/from the DOM.
