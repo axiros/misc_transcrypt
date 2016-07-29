@@ -1,13 +1,26 @@
 import time
 
-def die(err_type, *a):
-    p = ['!!']
+def dumps(s):
+    if not console.json:
+        die('dumps requries lib', 'console-json')
+    console.json(s)
+
+
+
+def out(prefix, *a):
+    p = [prefix]
     for obj in a:
         if obj.__repr__:
             p.append(obj.__repr__())
         else:
             p.append(obj)
     console.log.apply(console, p)
+
+def log(*a):
+    out('', *a)
+
+def die(err_type, *a):
+    out('!!', *a)
     throw (__new__( Error(err_type)))
 
 

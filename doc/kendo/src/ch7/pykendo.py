@@ -20,7 +20,10 @@ from redux import ReduxApp, ReduxComponent as RC
 from render import PlainStateRenderer as PSR
 
 class ReduxRouter:
-    is_router = 1
+    r_inactive, r_active, r_waiting = 'inact', 'active', 'waiting'
+    r_state = 'inact'
+    cur_route = None
+
     def start_router(self):
         pass
 
@@ -37,10 +40,14 @@ class ReduxRouter:
         if not s:
             return id[0]
         for k, v in s.items():
-            id.extend([k, v])
+            if not k == '_id_':
+                id.extend([k, v])
         id =  '.'.join(id)
         return id
 
+    def set_router_state(self, mode):
+        console.log('Switching router state to ', mode)
+        self.r_state = mode
 
     def find_class(self, container, cls):
         ''' find the class by string '''
@@ -54,15 +61,14 @@ class ReduxRouter:
 
 
     def realize_route(self, container, route):
+        console.log('realizing route in', container.id, route, self.r_state)
         for sel, comp in route.items():
             # comp instances are id'ed by their type plus principal state:
             store_id = self.build_store_id(container, comp)
-            instance = self.components_by_id.store_id
-            if instance:
-                debugger
-            else:
-                cls = comp.cls
-                cls = self.find_class(container, cls)
+            instance = self.components_by_id[store_id]
+            if not instance:
+                clsname = comp.cls
+                cls = self.find_class(container, clsname)
                 m = {}
 
                 instance = cls( id         = store_id,
@@ -71,11 +77,27 @@ class ReduxRouter:
                                 init_state = comp.state,
                                 container  = container)
 
-                instance.update()
+                #instance.update()
+
+            __pragma__('js', '{}', 'var need_data = instance.data === null')
+            need_data = False
+            if instance.url and not 'data' in instance.state:
+                self.set_router_state(self.r_waiting)
+                need_data = True
+                if 'auto_data' in instance and not instance.requesting_data:
+                    instance.requesting_data = True
+                    instance.get_data()
+
+            if need_data:
+                # we dont' go deeper in this one - only when data is there:
+                continue
             for k in comp.keys():
                 if k in ['cls', 'state']:
                     continue
                 self.realize_route(instance, {k: comp[k]})
+        if container == self:
+            console.log('route complete', route)
+            self.route_finished = 1
 
 
 
@@ -87,7 +109,9 @@ class Top(RC, PSR):
     template = 'Top {state}<hr>'
 
 class Comp1(RC, PSR):
+    url = '/ch7/server/sample.json'
     template = 'Comp1 {state}<hr><div id="sub"></div>'
+    auto_data = 1
 
 class Comp2(RC, PSR):
     template = 'Comp2 {state}<hr><div id="sub"></div>'
@@ -122,7 +146,7 @@ route = {
 
 def run(sel):
     app = MyApp(d(route=route))
-    #mc.ajax('get', {}, '/ch7/server/sample.json')
+    window.app = app
 
 
 
