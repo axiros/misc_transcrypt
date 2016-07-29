@@ -138,12 +138,8 @@ class ReduxApp:
         for comp_id, kv in d.items():
             # deep copy for route updates
             if comp_id == 'route':
-                m = {}
-                have = ns.route
-                if not have:
-                    have = {}
-                jq.extend(m, have, kv)
-                ns.route = m
+                r = ns.route
+                jq.extend(True, {}, jq.extend(True, ns, action.data))
                 continue
 
             comp = self.components_by_id[comp_id]
@@ -162,8 +158,6 @@ class ReduxApp:
         s_log(x)
         s = self.store.getState()
         for id, comp in self.components_by_id.items():
-            #if id == 'xApp.Comp1.id1.bar.Comp2.id2.foo':
-            #    debugger
             store_cstate = s[id]
             if not store_cstate:
                 # slider back in time:
@@ -186,12 +180,10 @@ class ReduxApp:
         rs = self.r_state
         if rs == self.r_active:
             return
-        call = 0
-        if s.action == 'server_data' and rs == self.r_waiting:
-            call = 1
-        if s.route != self.cur_route and rs == self.r_inactive:
-            call = 1
-        if call:
+        if (s.action == 'route_update') or \
+           (s.action == 'server_data' and rs == self.r_waiting) or \
+           (s.route != self.cur_route and rs == self.r_inactive):
+
             console.log('calling router')
             self.set_router_state(self.r_active)
             self.realize_route(self, s.route)

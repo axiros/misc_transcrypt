@@ -11,7 +11,7 @@
 #class ThemeRoller(themeroller.ThemeRoller)   : pass
 
 
-from tools import d, dj, die
+from tools import d, dj, die, dumps
 
 __pragma__('alias', 'jq', '$')
 
@@ -26,7 +26,6 @@ class ReduxRouter:
 
     def start_router(self):
         pass
-
 
     def build_store_id(self, container, comp):
         """
@@ -62,6 +61,10 @@ class ReduxRouter:
 
     def realize_route(self, container, route):
         console.log('realizing route in', container.id, route, self.r_state)
+        #if self.foo:
+        #    dumps(route)
+        #    debugger
+
         for sel, comp in route.items():
             # comp instances are id'ed by their type plus principal state:
             store_id = self.build_store_id(container, comp)
@@ -76,8 +79,6 @@ class ReduxRouter:
                                 select     = sel,
                                 init_state = comp.state,
                                 container  = container)
-
-                #instance.update()
 
             __pragma__('js', '{}', 'var need_data = instance.data === null')
             need_data = False
@@ -147,8 +148,13 @@ route = {
 def run(sel):
     app = MyApp(d(route=route))
     window.app = app
-
-
+    def f():
+        app.foo = 1
+        app.dispatch('route_update', 'route',
+            {'#mygrid':
+                {'#main':
+                    {'#sub': {'cls': 'Top'}}}})
+    window.setTimeout(f, 1000)
 
 
 

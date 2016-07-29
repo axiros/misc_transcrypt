@@ -10,8 +10,10 @@
 		- [Simple Renderer](#simple-renderer)
 		- [Router](#router)
 			- [Sync Routing](#sync-routing)
-				- [Key Achievements](#key-achievements)
+				- [Achievements](#achievements)
 		- [Going Async: Data Backed Components - Either / Or. A Valid Assumption ?](#going-async-data-backed-components-either-or-a-valid-assumption)
+			- [Achievements](#achievements-1)
+	- [Route Updates](#route-updates)
 
 <!-- tocstop -->
 
@@ -198,10 +200,10 @@ The sync version of the routing, i.e. when it instantiates the whole tree is pre
 
 *[Commit](https://github.com/axiros/misc_transcrypt/commit/96ae3dd285208531b793c7e317afbb2b39251d30), redux.py and pykendo.py are the interesting modules.*
 
-##### Key Achievements
+#####  Achievements
 
 1. As you can see from the shot we went away from random instance IDs to IDs derived from hirarchy, classname and principal state parameters and their values.
-2. We
+
 
 
 ### Going Async: Data Backed Components - Either / Or. A Valid Assumption ?
@@ -215,10 +217,13 @@ We try that assumption and go with this first Router implementation:
 
 <img src="./c7_3.png" width="300"></img>
 
-*[commit](https://github.com/axiros/misc_transcrypt/commit/090b3e5) ('async router'), again redux.py and pykendo.py are the interesting modules and also the renderer.*
+*[Commit](https://github.com/axiros/misc_transcrypt/commit/090b3e5) ('async router'), again redux.py and pykendo.py are the interesting modules and also the renderer.*
 
-- If you try the time slider you'll see that the components neatly mount and unmount into/from the DOM.
-- The state of the components remains stored, so no new data fetches when going back, then forward in time, since its the router itself how, when no data is present, triggers the fetch.
+#### Achievements
+
+1. The second component is instantiated and updates the DOM only when the first component has data
+1. If you try the time slider you'll see that the components neatly mount and unmount into/from the DOM
+1. The state of the components remains stored, so no new data fetches when going back, then forward in time, since its the router itself how, when no data is present, triggers the fetch
 
 This is what we do at store updates:
 
@@ -243,3 +248,7 @@ if call:
 - When we are within a routing process (our router state is active) then we dont' jump in again into realize_route.
 - If we have server data and the router is in waiting state we enter it.
 - The routing itself (`realize_route`) is always a 100% sync. function, triggering component instantiations and data fetches.
+
+
+
+## Route Updates
