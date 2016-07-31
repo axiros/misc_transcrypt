@@ -16,7 +16,7 @@ from tools import d, dj, die, dumps
 __pragma__('alias', 'jq', '$')
 
 
-from redux import ReduxApp, ReduxComponent as RC
+from redux import LC, ReduxApp, ReduxComponent as RC
 from render import PlainStateRenderer as PSR
 
 class ReduxRouter:
@@ -68,11 +68,6 @@ class ReduxRouter:
         for sel, target in route.items():
             # comp instances are id'ed by their type plus principal state:
             store_id = self.build_store_id(container, target)
-            mounted = self.get_subs(container, sel, store_id, True)
-            if len(mounted):
-                ids = [id for id, v in mounted]
-                self.dispatch('life_cycle', 'unmount', ids)
-
             instance = self.components_by_id[store_id]
             if not instance:
                 clsname = target.cls
@@ -111,12 +106,16 @@ class App(RC, PSR):
     template = '<div id="top"/>{state}<hr><div id="main">hello world</div>'
 
 class Top(RC, PSR):
-    template = 'Top {state}<hr>'
+    template = 'Top {state}<div id="ts"></div><hr>'
 
 class Comp1(RC, PSR):
     url = '/ch7/server/sample.json'
     template = 'Comp1 {state}<hr><div id="sub"></div>'
     auto_data = 1
+    def preregister(self):
+        def f():
+            self.mount_sub('#sub', 'Comp2', {'new': 'state'})
+        window.setTimeout(f, 2000)
 
 class Comp2(RC, PSR):
     template = 'Comp2 {state}<hr><div id="sub"></div>'
@@ -155,8 +154,10 @@ def run(sel):
     def f():
         app.foo = 1
         app.dispatch('route_update', 'route',
-            {'#mygrid':
-                {'#main':
+            {'#mygrid': {
+                '#new': {'#n2': {'cls': 'Top'}},
+                '#top': False,
+                '#main':
                     {'#sub': {'cls': 'Top', 'state': {'top': 23}}}}})
     window.setTimeout(f, 1000)
 

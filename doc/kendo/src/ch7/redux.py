@@ -49,7 +49,12 @@ class ReduxComponent:
         self._container = kw.container
         self.select     = kw.select
         self.state      = kw.init_state or {}
+        self.preregister()
         self.register()
+
+    def preregister(self):
+        ''' hook'''
+        pass
 
     def register(self):
         if not self.id: # set by the router normally
@@ -97,6 +102,22 @@ class ReduxComponent:
         self.update()
 
 
+    def mount_sub(self, select, cls, state):
+        '''dispatching a route action which leads to a mounted subcomponent '''
+        # where are we in the current route?
+        s = self._app.get_state().route
+        parents = self._app.parents(self)
+        route = full_route = {}
+        for p in parents:
+            m = {}
+            route[p.select] = m
+            route = m
+        route[select] = {'cls': cls}
+        if state:
+            route[select]['state'] = state
+        self._app.dispatch('route_update', 'route', full_route)
+
+
 class ReduxApp:
     id = 'app'
     store = s_store = None
@@ -116,6 +137,8 @@ class ReduxApp:
         self.s_store.onValue(self.update_components)
         # we are also a component, our app = self:
 
+    def get_state(self):
+        return self.store.getState()
 
     def dispatch(self, type, comp_id, kvs):
         ''' updating of a single components state '''
@@ -137,25 +160,31 @@ class ReduxApp:
 
         ns['action'] = action.type
         for comp_id, kv in d.items():
-            if action.type == 'life_cycle':
-                if len(d.unmount):
-                    for id in d.unmount:
-                        if id in state:
-                            del state[id]
-                    continue
+            #if action.type == 'life_cycle':
+            #    if len(d.unmount):
+            #        # kick its id from the new state, so that by the observer
+            #        # it will be unmounted:
+            #        for id in d.unmount:
+            #            if id in ns:
+            #                del ns[id]
+            #        continue
 
             # deep copy for route updates
-            if comp_id == 'route':
+            if action.type == 'route_update':
+                cc = self.components_by_id.App
                 def f(t, s):
                     # avoid merging state!
                     # if new route does not contain state we transfer that of
                     # the old one:
+                    debugger
+                    console.log(t)
+                    console.log(s)
+                    debugger
                     if 'state' in s:
                         for k in s.keys():
                             t[k] = s[k]
-                lodash.mergeWith(ns, action.data, f)
-
-                #ns = jq.extend(True, ns, action.data)
+                cur = []
+                lodash.mergeWith(ns, action.data, f.bind(cc))
                 continue
 
             comp = self.components_by_id[comp_id]
@@ -208,14 +237,6 @@ class ReduxApp:
                 self.set_router_state(self.r_inactive)
 
 
-    def register_component(self, comp):
-        self.components_by_id[comp.id] = comp
-        # here, app may still freely mutate the state, e.g. pull from server:
-        # via self.ajax, we have the comp object
-        # for now we accept it as is, and this will trigger the comp.update:
-        self.dispatch('comp.init', comp.id, comp.state)
-
-
     def ajax(self, comp, meth, send, url):
         def success(data, mode, props):
             id, app = this.comp.id, self
@@ -229,7 +250,14 @@ class ReduxApp:
 
 
 
-    # registry functions:
+    # ------------------------------------------------------ registry functions
+    def register_component(self, comp):
+        self.components_by_id[comp.id] = comp
+        # here, app may still freely mutate the state, e.g. pull from server:
+        # via self.ajax, we have the comp object
+        # for now we accept it as is, and this will trigger the comp.update:
+        self.dispatch('comp.init', comp.id, comp.state)
+
     def get_subs(self, container, select, excl_id, deep):
         ''' get all sub components of a component '''
         if not excl_id:
@@ -251,3 +279,10 @@ class ReduxApp:
         return ret
 
 
+    def parents(self, comp):
+        parents = []
+        p = comp
+        while p != comp._app:
+            parents.insert(0, p)
+            p = p._container
+        return parents

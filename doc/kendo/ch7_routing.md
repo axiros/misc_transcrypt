@@ -288,7 +288,7 @@ Can't really explain why but have the gut feeling that we should.
 Looking closely we find that a `route_update` induced swap of Comp2 with Top produced a funny principal state for Top: A *merge* of previous Comp2 principal state with that of Top.
 Clear, we handle the route updates via deep copies and jquery.extend did exactly that.
 
-[This]((https://github.com/axiros/misc_transcrypt/commit/90d2ed2) fixes that, using lodash's wonderful `mergeWith` function.
+[This](https://github.com/axiros/misc_transcrypt/commit/90d2ed2) fixes that, using lodash's wonderful `mergeWith` function.
 
 ```python
 if comp_id == 'route':
