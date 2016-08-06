@@ -310,11 +310,13 @@ and we realized we got a few things wrong in this first implementation...
 
 # Better Implementation
 
-The first implementation led to problems with the time slider: The router did his route checking and even data downloading from the reducer - and this is clearly wrong.
+The first implementation led to problems with the time slider: The router caused direct state changes while route checking and even data downloading from the observer - and this is clearly wrong: State changing and Dom Updating are two distinct transactional things.
 
-We learned that the reducer really exclusively has to job to deliver a new store state but not trigger actions which cause inline action dispatches again (requiring a router.is_active flag to not end in loops).
+We learned that the reducer really exclusively has to job to deliver a new store state - and the observer should, while not finished, trigger actions which cause inline action dispatches again (requiring a router.is_active flag to not end in loops).
 
-In the next iteration we solved that and really only update the state from the `route_update` action - while and DOM related and data fetching action is done in the observer.
+----
+
+In the next iteration we solved that and really only - but completely update the state from the `route_update` action in the reducer - while and DOM related and data fetching action is done in the observer.
 
 Have look at the [code](https://github.com/axiros/misc_transcrypt/commit/d14cd80).
 
