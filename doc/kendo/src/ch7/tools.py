@@ -62,7 +62,7 @@ def d(*a):
     return dict(r)
 
 
-def dj(*a):
+def jd(*a):
     ''''
     deep = d(foo=d(bar=42)) => deep = {'foo': {'bar': 42}}
     with the map a pure js obj.

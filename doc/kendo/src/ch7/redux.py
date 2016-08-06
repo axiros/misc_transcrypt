@@ -1,4 +1,5 @@
-from tools import d, dj, dumps, log
+from tools import d, jd, dumps, log, die
+from redux_router import ReduxRouter
 
 
 __pragma__('alias', 'jq', '$') # only for ajax, replace maybe with sth lighter
@@ -15,11 +16,6 @@ def create_redux(reducer, init_state):
         return c(reducer, init_state, wd())
     else:
         return c(reducer, init_state)
-
-
-# app = globally available:
-#app = ReduxApp()
-#app.store.dispatch(d(type='test', data=d(foo='bar')))
 
 import time
 class LC:
@@ -39,6 +35,7 @@ class ReduxComponent:
     state can be set by the app, also async.
     '''
     id = state = select = None # mp mountpoint, selector is reserved by TS
+    # state id, updated at each change. useful for quick diffs in the
     __state_id__ = 0
     _app = _container = None
     lc_state = LC.new
@@ -61,16 +58,13 @@ class ReduxComponent:
             self.id = self.__class__.__name__ + '_' + time.time()
         if not self.state:
             self.state = {}
-        # state id, updated at each change. useful for quick diffs in the
-        # update_all:
-        self.state['_id_'] = self.__state_id__
 
         self._app.register_component(self)
 
     def __repr__(self):
         s = self.id
-        if self.select:
-            s += '@' + self.select
+        #if self.select:
+        #    s += '@' + self.select
         s += '[' + self.lc_state + ']'
         return s
 
@@ -88,6 +82,7 @@ class ReduxComponent:
 
     def unmount(self):
         self.dom_revert()
+        self.__state_id__ = 0
         self.set_state(LC.unmounted)
 
     def ajax(self, meth, send, url):
@@ -115,10 +110,24 @@ class ReduxComponent:
         route[select] = {'cls': cls}
         if state:
             route[select]['state'] = state
+        self._app.baz = 1
         self._app.dispatch('route_update', 'route', full_route)
 
+def build_store_id( prefix, target, sel):
+     """
+     comp = {comp: 'App', 'state': {...} -> build an id from
+     comp. type and principal state """
+     id = [prefix + sel + '.' + target.cls]
+     s = target.state
+     if not s:
+         return id[0]
+     for k, v in dict(s).items():
+         if not k in ('_id_', 'data'):
+             id.extend([k, v])
+     id =  '.'.join(id)
+     return id
 
-class ReduxApp:
+class ReduxApp(ReduxRouter):
     id = 'app'
     store = s_store = None
     components_by_id = None
@@ -126,8 +135,6 @@ class ReduxApp:
     def __init__(self, init_state):
         self.init_state = init_state or {}
         self.create_store_and_components_registry()
-        if 'r_state' in self:
-            self.start_router()
 
     def create_store_and_components_registry(self):
         self.components_by_id = {}
@@ -145,21 +152,26 @@ class ReduxApp:
         # will trigger call of redux to reducer:
         self.store.dispatch({'type': type, 'data': {comp_id: kvs}})
 
+
     def reducer(self, state, action):
         ''' job of this one is to build a new state for the store, based on its
         current state and an action with type and state data '''
         console.log('reducer, type:', action.type, 'action.data:')
         dumps(action.data)
 
-        ns = {}        # new state - from old state:
+        ns = {'route': {}}        # new state - from old state:
         ns.update(state)
         # and action data:
-        d = action.data
-        if not d:
+        if not action.data:
+            # init:
             return ns
 
         ns['action'] = action.type
-        for comp_id, kv in d.items():
+        if action.type == 'route_update':
+            return self.reduce_route_update(ns, action)
+
+        # normal state changes:
+        for comp_id, kv in action.data.items():
             #if action.type == 'life_cycle':
             #    if len(d.unmount):
             #        # kick its id from the new state, so that by the observer
@@ -168,24 +180,6 @@ class ReduxApp:
             #            if id in ns:
             #                del ns[id]
             #        continue
-
-            # deep copy for route updates
-            if action.type == 'route_update':
-                cc = self.components_by_id.App
-                def f(t, s):
-                    # avoid merging state!
-                    # if new route does not contain state we transfer that of
-                    # the old one:
-                    debugger
-                    console.log(t)
-                    console.log(s)
-                    debugger
-                    if 'state' in s:
-                        for k in s.keys():
-                            t[k] = s[k]
-                cur = []
-                lodash.mergeWith(ns, action.data, f.bind(cc))
-                continue
 
             comp = self.components_by_id[comp_id]
             # for comps we know copy level, theirs are flat:
@@ -199,64 +193,97 @@ class ReduxApp:
         return ns
 
     def update_components(self, x):
-        """ called from store observer """
+        """
+        Called from store observer
+
+        The store should at this point just have instantiated comps
+        which must be in the DOM.
+        So do this now, update the DOM.
+
+        We go through all in the reg.
+        Check if in the store:
+            if not: unmount if not already unmounted
+            if in:  mount if not already mounted
+
+        Complication: Comps which need data, but have subcomps
+        (e.g. from a copied route with data present, in the new browser the data
+        must be pulled first to mount the subcomp).
+        Here we break the process for the sub comps and start the data fetch.
+        """
         s_log(x)
-        s = self.store.getState()
-        for id, comp in self.components_by_id.items():
-            store_cstate = s[id]
-            if not store_cstate:
-                # slider back in time:
-                if not comp.__state_id__ == -1:
-                    comp.unmount()
-                comp.__state_id__ = -1
+        reg = self.components_by_id
+        ids = reg.keys()
+        s = self.get_state()
+        __pragma__('js', '{}', 'var ids_rev = ids.reverse()')
+
+        # unmount from longest to shortest:
+        for id in ids_rev:
+            if not id in s:
+                comp = reg[id]
+                if comp.lc_state != LC.unmounted:
+                    if self.bar:
+                        debugger
+                    reg[id].unmount()
+
+        # now top down instantiation:
+        delayed = []
+        __pragma__('js', '{}', 'var ids = ids_rev.sort()')
+        for id in ids:
+            state = s[id]
+            if not state or id in delayed:
+                # not in store
                 continue
-            if comp.__state_id__ != store_cstate._id_:
-                data = store_cstate.data
+            comp = reg[id]
+            if not comp:
+                console.log('skipping - not in store', id)
+                continue
+            if comp.lc_state == LC.new:
+                comp.update()
+            elif comp.__state_id__ != state._id_:
+                data = state.data
                 # convenience for the comps: provide a got_data hook ,saves
                 # some ifs in the comps:
-                if data and comp.state.data != data:
-                    comp.state = store_cstate
+                comp.state = state
+                if data and s['action'] == 'server_data':
                     comp.got_data()
                 else:
-                    comp.state = store_cstate
                     comp.update()
-                comp.__state_id__ = store_cstate._id_
+            comp.__state_id__ = state._id_
 
-        rs = self.r_state
-        if rs == self.r_active:
-            return
-        if (s.action == 'route_update') or \
-           (s.action == 'server_data' and rs == self.r_waiting) or \
-           (s.route != self.cur_route and rs == self.r_inactive):
-
-            console.log('calling router')
-            self.set_router_state(self.r_active)
-            self.realize_route(self, s.route)
-            if self.r_state != self.r_waiting:
-                self.cur_route = s.route
-                self.set_router_state(self.r_inactive)
+            if comp.url and not 'data' in state:
+                if hasattr(comp, 'auto_data'):
+                    if comp.requesting_data == True:
+                        pass
+                    else:
+                        comp.get_data()
+                comp.requesting_data = True
+            if comp.requesting_data:
+                delayed.extend([i for i in ids if i.startswith(comp.id)])
 
 
     def ajax(self, comp, meth, send, url):
         def success(data, mode, props):
             id, app = this.comp.id, self
-            app.dispatch('server_data', id, dj(data=data))
+            app.dispatch('server_data', id, jd(data=data))
+        def error(data, mode, props):
+            die("ServerComm", 'no data', comp.id, comp.url, props)
 
-        opts = dj(type=meth, url=url,
-                dataType='json', data=send,
-                success=success, error=success,
-                context=dj(comp=comp, app=self))
+        opts = jd(type=meth, url=url,
+                  dataType='json', data=send,
+                  success=success, error=error,
+                  context=jd(comp=comp, app=self))
         jq.ajax(opts)
 
 
 
     # ------------------------------------------------------ registry functions
     def register_component(self, comp):
+        console.log('registering', comp.id)
         self.components_by_id[comp.id] = comp
         # here, app may still freely mutate the state, e.g. pull from server:
         # via self.ajax, we have the comp object
         # for now we accept it as is, and this will trigger the comp.update:
-        self.dispatch('comp.init', comp.id, comp.state)
+        #self.dispatch('comp.init', comp.id, comp.state)
 
     def get_subs(self, container, select, excl_id, deep):
         ''' get all sub components of a component '''

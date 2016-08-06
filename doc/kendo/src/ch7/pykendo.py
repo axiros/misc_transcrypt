@@ -11,95 +11,14 @@
 #class ThemeRoller(themeroller.ThemeRoller)   : pass
 
 
-from tools import d, dj, die, dumps
+from tools import d, jd, die, dumps, log
 
 __pragma__('alias', 'jq', '$')
+__pragma__('alias', 'lodash', '_')
 
 
 from redux import LC, ReduxApp, ReduxComponent as RC
 from render import PlainStateRenderer as PSR
-
-class ReduxRouter:
-    r_inactive, r_active, r_waiting = 'inact', 'active', 'waiting'
-    r_state = 'inact'
-    cur_route = None
-
-    def start_router(self):
-        pass
-
-    def build_store_id(self, container, comp):
-        """
-        comp = {comp: 'App', 'state': {...} -> build an id from
-        comp. type and principal state """
-        if container == self:
-            id = [comp.cls]
-        else:
-            id = [container.id + '.' + comp.cls]
-        s = comp.state
-        if not s:
-            return id[0]
-        for k, v in s.items():
-            if not k == '_id_':
-                id.extend([k, v])
-        id =  '.'.join(id)
-        return id
-
-    def set_router_state(self, mode):
-        console.log('Switching router state to ', mode)
-        self.r_state = mode
-
-    def find_class(self, container, cls):
-        ''' find the class by string '''
-        p = container
-        while p:
-            c = p[cls]
-            if c:
-                return c
-            p = p._container
-        die(cls, 'not found in', container)
-
-
-
-
-
-    def realize_route(self, container, route):
-        console.log('realizing route in', container.id, route, self.r_state)
-
-        for sel, target in route.items():
-            # comp instances are id'ed by their type plus principal state:
-            store_id = self.build_store_id(container, target)
-            instance = self.components_by_id[store_id]
-            if not instance:
-                clsname = target.cls
-                cls = self.find_class(container, clsname,)
-
-                instance = cls( id         = store_id,
-                                app        = self,
-                                select     = sel,
-                                init_state = target.state,
-                                container  = container )
-
-            __pragma__('js', '{}', 'var need_data = instance.data === null')
-            need_data = False
-            if instance.url and not 'data' in instance.state:
-                self.set_router_state(self.r_waiting)
-                need_data = True
-                if 'auto_data' in instance and not instance.requesting_data:
-                    instance.requesting_data = True
-                    instance.get_data()
-
-            if need_data:
-                # we dont' go deeper in this one - only when data is there:
-                continue
-            for k in target.keys():
-                if k in ['cls', 'state']:
-                    continue
-                self.realize_route(instance, {k: target[k]})
-        if container == self:
-            console.log('route complete', route)
-            self.route_finished = 1
-
-
 
 
 class App(RC, PSR):
@@ -114,13 +33,13 @@ class Comp1(RC, PSR):
     auto_data = 1
     def preregister(self):
         def f():
-            self.mount_sub('#sub', 'Comp2', {'new': 'state'})
+            self.mount_sub('#sub', 'Comp2', {'new': 'state2'})
         window.setTimeout(f, 2000)
 
 class Comp2(RC, PSR):
     template = 'Comp2 {state}<hr><div id="sub"></div>'
 
-class MyApp(ReduxApp, ReduxRouter):
+class MyApp(ReduxApp):
     ''' woraround to get nested classes, not in TS currently '''
     App = App
     Top = Top
@@ -143,25 +62,39 @@ route = {
             }
         },
         "#top": {
-            "cls": "Top"
+            "cls": "Top",
+            "state": {'idtop': 23}
         }
     }
 }
 
 def run(sel):
-    app = MyApp(d(route=route))
+    app = MyApp()
+    app.dispatch('route_update', 'route', route)
+
     window.app = app
     def f():
         app.foo = 1
+
         app.dispatch('route_update', 'route',
             {'#mygrid': {
-                '#new': {'#n2': {'cls': 'Top'}},
+        #        '#new': {'#n2': {'cls': 'Top'}},
                 '#top': False,
                 '#main':
                     {'#sub': {'cls': 'Top', 'state': {'top': 23}}}}})
-    window.setTimeout(f, 1000)
+    #window.setTimeout(f, 1000)
 
+    def f():
+        app.foo = 1
 
+        app.dispatch('route_update', 'route',
+            {'#mygrid': {
+        #        '#new': {'#n2': {'cls': 'Top'}},
+                '#main':
+                    {'#sub': {'cls': 'Comp2', 'state': {'new': 'state'}}}}})
+    #window.setTimeout(f, 1000)
+
+'''
 
 from tools import d
 class NestedDataGrid:
@@ -184,4 +117,4 @@ class NestedDataGrid:
 
 
 
-
+'''
