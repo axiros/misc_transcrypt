@@ -6,14 +6,16 @@
 - [Routing](#routing)
 	- [Principal State versus Primary State](#principal-state-versus-primary-state)
 	- [Async Instantiation](#async-instantiation)
-	- [Implementation](#implementation)
-		- [Simple Renderer](#simple-renderer)
-		- [Router](#router)
+	- [Simple Renderer](#simple-renderer)
+	- [Router First FuncSpec](#router-first-funcspec)
 			- [Sync Routing](#sync-routing)
-				- [Achievements](#achievements)
-		- [Going Async: Data Backed Components - Either / Or. A Valid Assumption ?](#going-async-data-backed-components-either-or-a-valid-assumption)
-			- [Achievements](#achievements-1)
+		- [Async Routing: Data Backed Components Have Exactly One Endpoint - A Valid Assumption ?](#async-routing-data-backed-components-have-exactly-one-endpoint-a-valid-assumption)
+			- [Achievements](#achievements)
 	- [Route Updates](#route-updates)
+		- [Auto Unmount](#auto-unmount)
+		- [Addressing a Merging Problem](#addressing-a-merging-problem)
+		- [Updates from URL Changes](#updates-from-url-changes)
+- [Better Implementation](#better-implementation)
 
 <!-- tocstop -->
 
@@ -21,7 +23,7 @@
 [This](http://jamesknelson.com/simple-routing-redux-react/) is a good read.
 
 
-Our high level design:
+Our first high level design:
 
 ```mermaid
 sequenceDiagram
@@ -43,9 +45,9 @@ We see we have to solve a few things:
 
 ## Principal State versus Primary State
 
-All primary state must be in Redux, the complete state of the app must be recreatable from it. E.g. the fact that a dropdown list is open after a mouse click means that the open state must be in Redux.
+All primary state must be in Redux, the complete state of the app must be re-creatable from it. E.g. the fact that a dropdown list is open after a mouse click means that the open state must be in Redux.
 
-But there are values which are more primary than others: those which the user expects to be set when he enters a route - and those we call principal params, those which are understood in URLs. A dropdown state is normally not principle, while the id of the records displayed within the dropdown options is.
+But there are values which are "more primary" than others: those which the user expects to be set when he enters a route - and those we call principal params, those which are understood in URLs. A dropdown state is normally not principle, while the id of the records displayed within the dropdown options is.
 
 It would be nice to decide via simple adding to a list which params are principle and by simply doing that the routes will be built and understood accordingly.
 
@@ -303,3 +305,36 @@ As you can see we even allow, as a feature, to transfer the principal state of t
 
 
 ### Updates from URL Changes
+
+and we realized we got a few things wrong in this first implementation...
+
+# Better Implementation
+
+The first implementation led to problems with the time slider: The router did his route checking and even data downloading from the reducer - and this is clearly wrong.
+
+We learned that the reducer really exclusively has to job to deliver a new store state but not trigger actions which cause inline action dispatches again (requiring a router.is_active flag to not end in loops).
+
+In the next iteration we solved that and really only update the state from the `route_update` action - while and DOM related and data fetching action is done in the observer.
+
+Have look at the [code](https://github.com/axiros/misc_transcrypt/commit/d14cd80).
+
+Most notable difference is that
+- the reducer only updates the store to a state where only components are in which require materialization into the DOM (mabye with an in-between server_data action, async)
+- data data structure for storing all routes became flat (while route updates are still nested, for convenience)
+- the observer handles DOM updates and data fetches
+
+
+```mermaid
+sequenceDiagram
+    URLChange-->>RouteAction: E.g. at load, or pasted in, via route_update
+	RouteAction-->>Router: handle route_update
+	note over Router: checks instantiated comps or creates /deletes them
+	note over Router: creates flat route store state
+	RouteAction-->>Store: New state
+	Store-->>Observer: New state
+	note over Observer: Unmounts all comps from the DOM which are not in store
+	note over Observer: Mounts all comps into the DOM which are in store and have data
+	note over Observer: Triggers data fetch for the rest, delays mounts for their subs.
+
+```
+after data is present the rest of the components is mounted.
